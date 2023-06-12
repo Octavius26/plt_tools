@@ -8,6 +8,20 @@ import matplotlib.ticker as ticker
 import matplotlib.colors as colors
 import matplotlib.colorbar as mpl_colorbar
 
+def add_to_title(txt:str,new_line:bool=True):
+    """
+	Args
+	----
+	- `txt` : str
+	- `new_line` : bool (default = True)
+
+	"""
+    if new_line : txt = '\n'+txt
+    Ax = plt.gca() # get current ax
+    Ax:plt.Axes
+    old_title = Ax.get_title()
+    plt.title(old_title + txt)
+
 def plot_vertical_line(x:float,**kwargs):
 	"""
 	Args
@@ -18,6 +32,18 @@ def plot_vertical_line(x:float,**kwargs):
 	Y = plt.ylim()
 	plt.plot([x]*2,Y,**kwargs)
 	
+
+def plot_horizontal_line(y:float,**kwargs):
+	"""
+	Args
+	----
+	- `y` : float
+	- `**kwargs` -> redirected to plt.plot()
+	"""
+	X = plt.xlim()
+	plt.plot(X,[y]*2,**kwargs)
+	
+
 
 
 def mutiple_plot_v2(l_Y:list|np.ndarray,
