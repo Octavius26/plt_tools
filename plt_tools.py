@@ -8,6 +8,29 @@ import matplotlib.ticker as ticker
 import matplotlib.colors as colors
 import matplotlib.colorbar as mpl_colorbar
 
+from typing import Literal
+
+def table_title(data:list[list]):
+    """
+    Args
+    ----
+    - `data` : list[list]
+    """
+    N = len(data)
+    add_to_title("\n"*N,new_line=False)
+    plt.table(data=data,loc='top')
+
+
+def hist2D(
+        X:np.ndarray,
+        Y:np.ndarray,
+        bins:int=20,
+        new_fig:bool=True):
+    if new_fig : plt.figure()
+    
+    plt.hist2d(x=X, y=Y, bins=bins, edgecolors='#000')
+    plt.colorbar(label='Number of values')
+
 def add_to_title(txt:str,new_line:bool=True):
     """
 	Args
@@ -129,7 +152,7 @@ def colorFader(c1:str,c2:str,N:int=5):
 		l_color.append(mpl.colors.to_hex((1-i)*c1 + i*c2))
 	return l_color
 
-def use_cmap(cmap:str='gray'):
+def use_cmap(cmap:Literal['gray','bwr','hsv','brg']='gray'):
 	"""
 	Args
 	----
