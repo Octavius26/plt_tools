@@ -10,6 +10,23 @@ import matplotlib.colorbar as mpl_colorbar
 
 from typing import Literal
 
+def remove_table_title():
+    l_table = plt.gca().tables
+    
+    if len(l_table) == 0 : raise ValueError("No table found")
+    
+    T = l_table[0]
+    import matplotlib.table as MT
+    T:MT.Table
+    nb_lignes = max( cell[0] for cell in T.get_celld())
+    T.remove()
+    title_str = plt.gca().title.get_text()
+    for _ in range(nb_lignes+1):
+        if title_str[-1] == '\n':
+            title_str = title_str[:-1]
+            
+    plt.title(title_str)
+
 def table_title(data:list[list]):
     """
     Args
@@ -18,8 +35,7 @@ def table_title(data:list[list]):
     """
     N = len(data)
     add_to_title("\n"*N,new_line=False)
-    plt.table(data=data,loc='top')
-
+    plt.table(cellText=data,loc='top')
 
 def hist2D(
         X:np.ndarray,
@@ -45,18 +61,19 @@ def add_to_title(txt:str,new_line:bool=True):
     old_title = Ax.get_title()
     plt.title(old_title + txt)
 
-def plot_vertical_line(x:float,**kwargs):
+def plot_vertical_line(x:float,color='#f00',linestyle='--',**plot_kwargs):
 	"""
 	Args
 	----
 	- `x` : float
-	- `**kwargs` -> redirected to plt.plot()
+	- `color` : str | Any
+	- `linestyle` : str
+	- `**plot_kwargs` -> redirected to plt.plot()
 	"""
 	Y = plt.ylim()
-	plt.plot([x]*2,Y,**kwargs)
-	
+	plt.plot([x]*2,Y,scaley=False,**plot_kwargs)
 
-def plot_horizontal_line(y:float,**kwargs):
+def plot_horizontal_line(y:float,**plot_kwargs):
 	"""
 	Args
 	----
@@ -64,10 +81,26 @@ def plot_horizontal_line(y:float,**kwargs):
 	- `**kwargs` -> redirected to plt.plot()
 	"""
 	X = plt.xlim()
-	plt.plot(X,[y]*2,**kwargs)
-	
+	plt.plot(X,[y]*2,scalex=False,**plot_kwargs)
 
-
+def add_diagonal_line(color='#f00',linestyle='--',**plot_kwargs):
+    """
+    Args
+    ----
+    - `color` : matplotlib color (default = '#f00')
+    - `linestyle` : matplotlib linestyle (default = '--')
+    - `**plot_kwargs` 
+    """
+    xmin,xmax = plt.xlim()
+    ymin,ymax = plt.ylim()
+    line_min = max(xmin,ymin)
+    line_max = min(xmax,ymax)
+    plt.plot([line_min,line_max],[line_min,line_max],
+             scalex=False,
+             scaley=False,
+             color=color,
+             linestyle=linestyle,
+             **plot_kwargs)
 
 def mutiple_plot_v2(l_Y:list|np.ndarray,
 					l_X:list|np.ndarray|None=None,
@@ -104,9 +137,6 @@ def mutiple_plot_v2(l_Y:list|np.ndarray,
 		for i,(Y,X) in enumerate(zip(l_Y,l_X)):
 			color = l_color[i]
 			plt.plot(X,Y,color=color)
-
-
-
 
 def mutiple_plot(l_Y:list|np.ndarray,
 				 color_range:tuple=("#f00","#00f"),
@@ -184,7 +214,6 @@ def use_big_label():
 def restore_default_param():
 	mpl.rcdefaults()
 	
-
 def no_y_ticks():
 	plt.yticks(ticks=[],labels=[])
 	
@@ -212,3 +241,7 @@ def change_grid(step_x:int=None,step_y:int=None):
 
 def no_axis():
 	plt.axis(False)
+ 
+ 
+ 
+ 
