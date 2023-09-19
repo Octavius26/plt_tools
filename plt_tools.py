@@ -10,6 +10,28 @@ import matplotlib.colorbar as mpl_colorbar
 
 from typing import Literal
 
+
+def hist2D_V2(x, y, bins=20, cmap='inferno', zero_color='black',new_fig=True,vmin=1,**np_hist_kwargs):
+    if new_fig : plt.figure()
+
+    hist, xedges, yedges = np.histogram2d(x, y, bins=bins,**np_hist_kwargs)
+    
+    custom_cmap = plt.get_cmap(cmap)  
+    custom_cmap.set_under(zero_color) 
+    
+    # --- plotting ---
+    plt.imshow(
+        hist.T,
+        extent=(xedges.min(), xedges.max(), yedges.min(), yedges.max()),
+        cmap=custom_cmap,
+        origin='lower',
+        aspect='auto',
+        vmin=vmin)
+    
+    plt.colorbar(label='Occurences')
+ 
+
+
 def remove_table_title():
     l_table = plt.gca().tables
     
@@ -71,17 +93,19 @@ def plot_vertical_line(x:float,color='#f00',linestyle='--',**plot_kwargs):
 	- `**plot_kwargs` -> redirected to plt.plot()
 	"""
 	Y = plt.ylim()
-	plt.plot([x]*2,Y,scaley=False,**plot_kwargs)
+	plt.plot([x]*2,Y,scaley=False, color=color,linestyle=linestyle,**plot_kwargs)
 
-def plot_horizontal_line(y:float,**plot_kwargs):
+def plot_horizontal_line(y:float,color='#f00',linestyle='--',**plot_kwargs):
 	"""
 	Args
 	----
 	- `y` : float
-	- `**kwargs` -> redirected to plt.plot()
+	- `color` : str | Any
+	- `linestyle` : str
+	- `**plot_kwargs` -> redirected to plt.plot()
 	"""
 	X = plt.xlim()
-	plt.plot(X,[y]*2,scalex=False,**plot_kwargs)
+	plt.plot(X,[y]*2,scalex=False,color=color,linestyle=linestyle,**plot_kwargs)
 
 def add_diagonal_line(color='#f00',linestyle='--',**plot_kwargs):
     """
